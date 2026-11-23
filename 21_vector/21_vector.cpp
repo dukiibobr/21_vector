@@ -1,5 +1,8 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
+#include <algorithm>
+//#include<ifstream>
 using namespace std;
 
 //void printVector(vector<int> v,vector<int> v2) {
@@ -29,21 +32,168 @@ class Train {
 	Time departure;
 	string destination;
 public:
+
 	Train():num(0),departure(),destination("-"){}
 	Train(int n,Time t,string de):num(n),departure(t),destination(de){}
 	
+	void print()const {
+		cout << "num: " << num << endl;
+		cout << "departure: " << departure.h<<"/"<<departure.m<<"/"<<departure.s<< endl;
+		cout << "destination: " << destination << endl;
+		cout << endl;
+	}
+
+	friend ostream& operator<<(ostream& out, const Train& t) {
+		out << t.num << " ";
+		out << t.departure.h << " ";
+		out<<t.departure.m << " ";
+		out<<t.departure.s << " ";
+		out << t.destination << " ";
+
+		return out;
+	}
+
+	friend istream& operator>>(istream& in,  Train& t) {
+		in >> t.num;
+
+		in >> t.departure.h;
+		in >> t.departure.m;
+		in >> t.departure.s;
+
+		in >> t.destination;
+		return in;
+	}
+
+	int getNum()const {
+		return num;
+	}
+	string getDestination()const {
+		return destination;
+	}
+	Time getDeparture()const {
+		return departure;
+	}
+
+	void setDeparture(Time t) {
+		departure = t;
+	}
+
+	int getTimeInSeconds()const {
+		return departure.h * 3600 + departure.m * 60 + departure.s;
+	}
 };
+
 class Railway {
 	vector<Train>trains;
 public:
-	Railway():trains(){}
-	Railway(Train t):trains(){}
-	
+	Railway() :trains() {}
+	Railway(const vector<Train>& t) :trains(t) {}
+
 
 	void addTrain(Train t) {
 		trains.push_back(t);
-		trains.push_back(t);
-		trains.push_back(t);
+	}
+
+	void printAll()const {
+		for (const auto& item : trains) {
+			cout << item << endl;
+		}
+	}
+
+	void printNum(int num)const {
+		for (const auto& item : trains)
+		{
+			if (item.getNum() == num)
+			{
+				cout << item;
+				return;
+			}
+		}
+		cout << "train not found" << endl;
+	}
+
+	void printDeparture(Time dep)const {
+		for (const auto& item : trains)
+		{
+			Time t = item.getDeparture();
+			if (t.h == dep.h and t.m == dep.m and t.s == dep.s)
+			{
+				cout << item;
+				return;
+			}
+		}
+		cout << "departure not found" << endl;
+	}
+
+	void printDestination(string dest)const {
+		for (const auto& item : trains)
+		{
+			if (item.getDestination() == dest)
+			{
+				cout << item;
+				return;
+			}
+		}
+		cout << "destination not found" << endl;
+	}
+
+
+	void changeTime(int num) {
+		for (auto& item : trains)
+		{
+			if (item.getNum() == num)
+			{
+				Time t;
+				cin >> t.h >> t.m >> t.s;
+				item.setDeparture(t);
+				return;
+			}
+		}
+		cout << "train not found" << endl;
+	}
+
+
+	void sortByTime() {
+		for (int i = 0; i < trains.size(); i++)
+		{
+			for (int j = 0; j < trains.size() - i - 1; j++)
+			{
+				if (trains[j].getTimeInSeconds() > trains[j + 1].getTimeInSeconds())
+				{
+					swap(trains[j], trains[j + 1]);
+				}
+			}
+		}
+	}
+
+		
+	void saveToFile()
+	{
+		ofstream out("trainsData.txt");
+		for (const auto& item:trains)
+		{
+			out << item << endl;
+		}
+		out.close();
+	}
+
+	void readFromFile()
+	{
+		ifstream in("trainsData.txt");
+
+		if (!in.is_open())
+		{
+			cout << "file not found" << endl;
+			return;
+		}
+		trains.clear();
+
+		Train t;
+		cout << "num/time/destination" << endl;
+		while (in >> t)
+			trains.push_back(t);
+
+		in.close();
 	}
 
 };
@@ -52,11 +202,24 @@ public:
 int main()
 {
 
+	Train t(1, { 2,3,40 }, "Kyiv");
+	Train t1(2, { 7,3,40 }, "Lviv");
+	Train t2(3, { 5,3,40 }, "Lviv");
 
-
-
-
-
+	vector<Train>v = { t,t1,t2 };
+	Railway r(v);
+	//r.addTrain(t1);
+	//r.printAll();
+	//r.printDeparture({2,3,40});
+	//r.printDestination("Lviv");
+	//r.printNum(2);
+	//r.changeTime(2);
+	//r.printAll();
+	//r.sortByTime();
+	//r.printAll();
+	r.saveToFile();
+	r.readFromFile();
+	r.printAll();
 
 
 
