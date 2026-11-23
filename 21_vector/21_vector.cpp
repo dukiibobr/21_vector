@@ -2,12 +2,6 @@
 #include <vector>
 using namespace std;
 
-
-
-
-
-
-
 //void printVector(vector<int> v,vector<int> v2) {
 //	cout << "vector 1: ";
 //	for (int i = 0; i < v.size(); i++)
@@ -26,10 +20,31 @@ using namespace std;
 
 
 
+struct Time {
+	int h, m, s;
+};
 
+class Train {
+	int num;
+	Time departure;
+	string destination;
+public:
+	Train():num(0),departure(),destination("-"){}
+	Train(int n,Time t,string de):num(n),departure(t),destination(de){}
+	
+};
+class Railway {
+	vector<Train>trains;
+public:
+	Railway():trains(){}
+	Railway(Train t):trains(){}
+	
 
+	void addTrain(Train t) {
+		trains.push_back(t);
+	}
 
-
+};
 
 
 int main()
@@ -137,11 +152,6 @@ int main()
 //			v.insert(v.begin() + i+1,7);
 //	}
 //	printVector(v, v2);
-
-
-
-
-
 
 }
 
