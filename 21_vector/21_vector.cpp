@@ -42,6 +42,8 @@ public:
 
 	void addTrain(Train t) {
 		trains.push_back(t);
+		trains.push_back(t);
+		trains.push_back(t);
 	}
 
 };
